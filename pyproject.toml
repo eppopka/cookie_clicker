@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cookie-clicker"
+version = "0.2.0"
+description = "A small desktop cookie clicker built with Python and tkinter"
+readme = "readme.md"
+requires-python = ">=3.9"
+dependencies = []
+
+[tool.setuptools]
+py-modules = ["economy", "game", "main", "save", "shop", "upgrades"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
