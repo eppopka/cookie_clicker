@@ -5,4 +5,10 @@ __pycache__/
 # Testing and environment caches
 .pytest_cache/
 .venv/
-venv/.DS_Store
+venv/
+
+# macOS metadata
+.DS_Store
+
+# Game save data
+cookie_clicker_save.json
