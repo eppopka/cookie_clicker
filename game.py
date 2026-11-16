@@ -1,3 +1,4 @@
+from upgrades import Upgrades
 import tkinter as tk
 from tkinter import messagebox
 import json
@@ -11,16 +12,20 @@ class Game:
     def __init__(self, root):
         self.root = root
         self.root.title("Cookie Clicker")
-        self.root.geometry("500x680")
+        self.root.geometry("500x750")
         self.root.resizable(False, False)
         self.root.configure(bg="#f5e6c8")
 
+        # Game state
         self.cookies = 0.0
         self.cps = 0.0
         self.click_power = 1.0
+        self.cps_multiplier = 1.0
 
         self.create_widgets()
-        self.shop = Shop(self.root, self)   # ← shop is in its own file
+        self.shop = Shop(self.root, self)
+        self.upgrades = Upgrades(self.root, self)   # ← created after shop
+
         self.load_game()
         self.update_loop()
 
@@ -44,7 +49,7 @@ class Game:
         )
         self.cookie_btn.pack(pady=15)
 
-        # Upgrade button
+        # Old simple upgrade button (you can remove this later if you want)
         self.upgrade_btn = tk.Button(
             self.root,
             text="",
@@ -75,7 +80,8 @@ class Game:
             messagebox.showinfo("Not enough cookies", f"You need {cost} cookies!")
 
     def recalculate_cps(self):
-        self.cps = self.shop.recalculate_cps()
+        base_cps = self.shop.recalculate_cps()
+        self.cps = base_cps * self.cps_multiplier
 
     def update_display(self):
         self.cookie_label.config(text=f"{self.cookies:,.1f} cookies")
@@ -87,6 +93,7 @@ class Game:
         )
 
         self.shop.update_buttons()
+        self.upgrades.update_buttons()
 
     def update_loop(self):
         self.cookies += self.cps * 0.1
@@ -97,7 +104,9 @@ class Game:
         data = {
             "cookies": self.cookies,
             "click_power": self.click_power,
+            "cps_multiplier": self.cps_multiplier,
             "buildings": self.shop.get_owned(),
+            "upgrades": self.upgrades.get_bought(),
             "timestamp": time.time()
         }
         with open(SAVE_FILE, "w") as f:
@@ -115,14 +124,19 @@ class Game:
 
             self.cookies = data.get("cookies", 0)
             self.click_power = data.get("click_power", 1)
+            self.cps_multiplier = data.get("cps_multiplier", 1.0)
+
             self.shop.load_owned(data.get("buildings", {}))
+            self.upgrades.load_bought(data.get("upgrades", {}))
+
             self.recalculate_cps()
 
             # Offline progress (max 8 hours)
             offline = min(time.time() - data.get("timestamp", time.time()), 8 * 3600)
             self.cookies += self.cps * offline
-        except Exception:
-            pass
+
+        except Exception as e:
+            print("Failed to load save:", e)
 
         self.update_display()
 
@@ -130,8 +144,17 @@ class Game:
         if messagebox.askyesno("Reset", "Are you sure you want to reset all progress?"):
             self.cookies = 0
             self.click_power = 1
+            self.cps_multiplier = 1.0
+
+            # Reset buildings
             self.shop.load_owned({name: 0 for name in self.shop.buildings})
+
+            # Reset upgrades
+            self.upgrades.load_bought({u["id"]: False for u in self.upgrades.upgrades})
+
             self.recalculate_cps()
+
             if os.path.exists(SAVE_FILE):
                 os.remove(SAVE_FILE)
+
             self.update_display()
