@@ -72,6 +72,19 @@ class Game:
         tk.Button(control_frame, text="Save", command=self.save_game).pack(side="left", padx=5)
         tk.Button(control_frame, text="Reset Game", command=self.reset_game).pack(side="left", padx=5)
 
+        tk.Label(
+            self.root, text="Tip: press Space to bake", font=("Arial", 9),
+            bg="#f5e6c8", fg="#a07850"
+        ).pack(pady=(4, 0))
+
+        self.root.bind("<space>", self._on_space_key)
+
+    def _on_space_key(self, event=None):
+        """Bake with the space bar, unless a button already has focus."""
+        if isinstance(self.root.focus_get(), tk.Button):
+            return
+        self.click_cookie()
+
     def click_cookie(self):
         self.cookies += self.click_power
         self.update_display()
