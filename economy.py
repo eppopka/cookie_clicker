@@ -67,4 +67,6 @@ def format_number(value: float) -> str:
         if magnitude >= threshold:
             scaled = f"{magnitude / threshold:.2f}".rstrip("0").rstrip(".")
             return f"{sign}{scaled}{suffix}"
+    if float(magnitude).is_integer():
+        return f"{sign}{magnitude:,.0f}"
     return f"{sign}{magnitude:,.1f}"

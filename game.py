@@ -5,7 +5,7 @@ import json
 import os
 import time
 
-from economy import click_upgrade_cost, offline_earnings
+from economy import click_upgrade_cost, format_number, offline_earnings
 from shop import Shop
 
 SAVE_FILE = "cookie_clicker_save.json"
@@ -81,19 +81,19 @@ class Game:
             self.click_power += 1
             self.update_display()
         else:
-            messagebox.showinfo("Not enough cookies", f"You need {cost} cookies!")
+            messagebox.showinfo("Not enough cookies", f"You need {format_number(cost)} cookies!")
 
     def recalculate_cps(self):
         base_cps = self.shop.recalculate_cps()
         self.cps = base_cps * self.cps_multiplier
 
     def update_display(self):
-        self.cookie_label.config(text=f"{self.cookies:,.1f} cookies")
-        self.cps_label.config(text=f"per second: {self.cps:,.1f}")
+        self.cookie_label.config(text=f"{format_number(self.cookies)} cookies")
+        self.cps_label.config(text=f"per second: {format_number(self.cps)}")
 
         upgrade_cost = click_upgrade_cost(self.click_level)
         self.upgrade_btn.config(
-            text=f"Upgrade Click Power (x{self.click_power:.0f}) - Cost: {upgrade_cost}"
+            text=f"Upgrade Click Power (x{self.click_power:g}) - Cost: {format_number(upgrade_cost)}"
         )
 
         self.shop.update_buttons()

@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
 
+from economy import format_number
+
 class Upgrades:
     def __init__(self, parent, game):
         self.game = game
@@ -84,7 +86,7 @@ class Upgrades:
             self.update_buttons()
             self.game.update_display()
         else:
-            messagebox.showinfo("Not enough cookies", f"You need {upgrade['cost']:,} cookies!")
+            messagebox.showinfo("Not enough cookies", f"You need {format_number(upgrade['cost'])} cookies!")
 
     def apply_effect(self, upgrade):
         effect = upgrade["effect"]
@@ -116,7 +118,7 @@ class Upgrades:
                 )
             else:
                 btn.config(
-                    text=f"{upgrade['name']}  |  {upgrade['description']}  |  Cost: {upgrade['cost']:,}",
+                    text=f"{upgrade['name']}  |  {upgrade['description']}  |  Cost: {format_number(upgrade['cost'])}",
                     state="normal",
                     bg="SystemButtonFace"
                 )
