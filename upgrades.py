@@ -128,7 +128,7 @@ class Upgrades:
 
     def load_bought(self, bought_dict):
         for upgrade in self.upgrades:
-            upgrade["bought"] = bought_dict.get(upgrade["id"], False)
-            if upgrade["bought"]:
-                self.apply_effect(upgrade)   # re-apply effects on load
+            # Saved click_power and cps_multiplier already include the
+            # effects of bought upgrades, so only restore the flags here.
+            upgrade["bought"] = bool(bought_dict.get(upgrade["id"], False))
         self.update_buttons()
