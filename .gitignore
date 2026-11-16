@@ -12,3 +12,8 @@ venv/
 
 # Game save data
 cookie_clicker_save.json
+
+# Packaging artefacts
+*.egg-info/
+build/
+dist/
