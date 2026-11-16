@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "cookie-clicker"
 version = "0.2.0"
 description = "A small desktop cookie clicker built with Python and tkinter"
-readme = "readme.md"
+readme = "README.md"
 requires-python = ">=3.9"
 dependencies = []
 
