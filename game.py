@@ -6,6 +6,7 @@ import os
 import time
 
 from economy import click_upgrade_cost, format_number, offline_earnings
+from save import deserialize_state, serialize_state
 from shop import Shop
 
 SAVE_FILE = "cookie_clicker_save.json"
@@ -105,16 +106,16 @@ class Game:
         self.root.after(100, self.update_loop)
 
     def save_game(self):
-        data = {
-            "cookies": self.cookies,
-            "click_power": self.click_power,
-            "click_level": self.click_level,
-            "cps_multiplier": self.cps_multiplier,
-            "buildings": self.shop.get_owned(),
-            "upgrades": self.upgrades.get_bought(),
-            "timestamp": time.time()
-        }
-        with open(SAVE_FILE, "w") as f:
+        data = serialize_state(
+            cookies=self.cookies,
+            click_power=self.click_power,
+            click_level=self.click_level,
+            cps_multiplier=self.cps_multiplier,
+            buildings=self.shop.get_owned(),
+            upgrades=self.upgrades.get_bought(),
+            timestamp=time.time(),
+        )
+        with open(SAVE_FILE, "w", encoding="utf-8") as f:
             json.dump(data, f)
         messagebox.showinfo("Saved", "Game saved!")
 
@@ -124,25 +125,26 @@ class Game:
             return
 
         try:
-            with open(SAVE_FILE, "r") as f:
-                data = json.load(f)
-
-            self.cookies = data.get("cookies", 0)
-            self.click_power = data.get("click_power", 1)
-            self.click_level = data.get("click_level", 1)
-            self.cps_multiplier = data.get("cps_multiplier", 1.0)
-
-            self.shop.load_owned(data.get("buildings", {}))
-            self.upgrades.load_bought(data.get("upgrades", {}))
-
-            self.recalculate_cps()
-
-            # Offline progress (capped inside the helper)
-            offline = offline_earnings(self.cps, time.time() - data.get("timestamp", time.time()))
-            self.cookies += offline
-
-        except Exception as e:
+            with open(SAVE_FILE, "r", encoding="utf-8") as f:
+                state = deserialize_state(json.load(f))
+        except (OSError, ValueError) as e:
             print("Failed to load save:", e)
+            self.update_display()
+            return
+
+        self.cookies = state["cookies"]
+        self.click_power = state["click_power"]
+        self.click_level = state["click_level"]
+        self.cps_multiplier = state["cps_multiplier"]
+
+        self.shop.load_owned(state["buildings"])
+        self.upgrades.load_bought(state["upgrades"])
+
+        self.recalculate_cps()
+
+        # Offline progress (capped inside the helper)
+        if state["timestamp"] is not None:
+            self.cookies += offline_earnings(self.cps, time.time() - state["timestamp"])
 
         self.update_display()
 
