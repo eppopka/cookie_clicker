@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
 
+from economy import building_cost, total_cps
+
 class Shop:
     def __init__(self, parent, game):
         self.game = game
@@ -40,7 +42,7 @@ class Shop:
 
     def get_cost(self, name):
         b = self.buildings[name]
-        return int(b["base_cost"] * (1.15 ** b["owned"]))
+        return building_cost(b["base_cost"], b["owned"])
 
     def buy(self, name):
         cost = self.get_cost(name)
@@ -54,7 +56,7 @@ class Shop:
             messagebox.showinfo("Not enough cookies", f"You need {cost:,} cookies!")
 
     def recalculate_cps(self):
-        return sum(b["owned"] * b["cps"] for b in self.buildings.values())
+        return total_cps(self.buildings)
 
     def update_buttons(self):
         for name, b in self.buildings.items():
