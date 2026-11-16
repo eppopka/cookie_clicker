@@ -4,6 +4,8 @@ from tkinter import messagebox
 import json
 import os
 import time
+
+from economy import click_upgrade_cost, offline_earnings
 from shop import Shop
 
 SAVE_FILE = "cookie_clicker_save.json"
@@ -71,7 +73,7 @@ class Game:
         self.update_display()
 
     def upgrade_click(self):
-        cost = int(50 * (1.5 ** (self.click_power - 1)))
+        cost = click_upgrade_cost(self.click_power)
         if self.cookies >= cost:
             self.cookies -= cost
             self.click_power += 1
@@ -87,7 +89,7 @@ class Game:
         self.cookie_label.config(text=f"{self.cookies:,.1f} cookies")
         self.cps_label.config(text=f"per second: {self.cps:,.1f}")
 
-        upgrade_cost = int(50 * (1.5 ** (self.click_power - 1)))
+        upgrade_cost = click_upgrade_cost(int(self.click_power))
         self.upgrade_btn.config(
             text=f"Upgrade Click Power (x{self.click_power:.0f}) - Cost: {upgrade_cost}"
         )
@@ -131,9 +133,9 @@ class Game:
 
             self.recalculate_cps()
 
-            # Offline progress (max 8 hours)
-            offline = min(time.time() - data.get("timestamp", time.time()), 8 * 3600)
-            self.cookies += self.cps * offline
+            # Offline progress (capped inside the helper)
+            offline = offline_earnings(self.cps, time.time() - data.get("timestamp", time.time()))
+            self.cookies += offline
 
         except Exception as e:
             print("Failed to load save:", e)
