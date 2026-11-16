@@ -5,4 +5,4 @@ __pycache__/
 # Testing and environment caches
 .pytest_cache/
 .venv/
-venv/
+venv/.DS_Store
