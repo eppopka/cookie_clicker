@@ -22,6 +22,7 @@ class Game:
         self.cookies = 0.0
         self.cps = 0.0
         self.click_power = 1.0
+        self.click_level = 1
         self.cps_multiplier = 1.0
 
         self.create_widgets()
@@ -73,9 +74,10 @@ class Game:
         self.update_display()
 
     def upgrade_click(self):
-        cost = click_upgrade_cost(self.click_power)
+        cost = click_upgrade_cost(self.click_level)
         if self.cookies >= cost:
             self.cookies -= cost
+            self.click_level += 1
             self.click_power += 1
             self.update_display()
         else:
@@ -89,7 +91,7 @@ class Game:
         self.cookie_label.config(text=f"{self.cookies:,.1f} cookies")
         self.cps_label.config(text=f"per second: {self.cps:,.1f}")
 
-        upgrade_cost = click_upgrade_cost(int(self.click_power))
+        upgrade_cost = click_upgrade_cost(self.click_level)
         self.upgrade_btn.config(
             text=f"Upgrade Click Power (x{self.click_power:.0f}) - Cost: {upgrade_cost}"
         )
@@ -106,6 +108,7 @@ class Game:
         data = {
             "cookies": self.cookies,
             "click_power": self.click_power,
+            "click_level": self.click_level,
             "cps_multiplier": self.cps_multiplier,
             "buildings": self.shop.get_owned(),
             "upgrades": self.upgrades.get_bought(),
@@ -126,6 +129,7 @@ class Game:
 
             self.cookies = data.get("cookies", 0)
             self.click_power = data.get("click_power", 1)
+            self.click_level = data.get("click_level", 1)
             self.cps_multiplier = data.get("cps_multiplier", 1.0)
 
             self.shop.load_owned(data.get("buildings", {}))
@@ -146,6 +150,7 @@ class Game:
         if messagebox.askyesno("Reset", "Are you sure you want to reset all progress?"):
             self.cookies = 0
             self.click_power = 1
+            self.click_level = 1
             self.cps_multiplier = 1.0
 
             # Reset buildings
