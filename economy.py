@@ -23,7 +23,8 @@ def building_cost(base_cost: float, owned: int,
     """Return the price of the next copy of a building."""
     if owned < 0:
         raise ValueError("owned buildings cannot be negative")
-    return int(base_cost * (growth ** owned))
+    # Round, not truncate: 100 * 1.15 is 114.999... in binary floats.
+    return int(round(base_cost * (growth ** owned)))
 
 
 def click_upgrade_cost(level: int) -> int:
@@ -33,7 +34,7 @@ def click_upgrade_cost(level: int) -> int:
     first upgrade starts at :data:`CLICK_UPGRADE_BASE_COST`.
     """
     level = max(1, level)
-    return int(CLICK_UPGRADE_BASE_COST * (CLICK_UPGRADE_GROWTH ** (level - 1)))
+    return int(round(CLICK_UPGRADE_BASE_COST * (CLICK_UPGRADE_GROWTH ** (level - 1))))
 
 
 def total_cps(buildings: Mapping[str, Mapping[str, float]],
@@ -63,10 +64,17 @@ def format_number(value: float) -> str:
     """Format a counter for the UI: ``1234.5`` becomes ``1.23K``."""
     sign = "-" if value < 0 else ""
     magnitude = abs(value)
-    for threshold, suffix in _SUFFIXES:
-        if magnitude >= threshold:
-            scaled = f"{magnitude / threshold:.2f}".rstrip("0").rstrip(".")
-            return f"{sign}{scaled}{suffix}"
+    for index, (threshold, suffix) in enumerate(_SUFFIXES):
+        if magnitude < threshold:
+            continue
+        scaled = magnitude / threshold
+        # 999_999 must render as "1M", not "1000K".
+        while scaled >= 999.995 and index > 0:
+            index -= 1
+            threshold, suffix = _SUFFIXES[index]
+            scaled = magnitude / threshold
+        rendered = f"{scaled:.2f}".rstrip("0").rstrip(".")
+        return f"{sign}{rendered}{suffix}"
     if float(magnitude).is_integer():
         return f"{sign}{magnitude:,.0f}"
     return f"{sign}{magnitude:,.1f}"
