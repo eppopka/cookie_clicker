@@ -10,6 +10,7 @@ from save import deserialize_state, serialize_state
 from shop import Shop
 
 SAVE_FILE = "cookie_clicker_save.json"
+AUTOSAVE_INTERVAL_MS = 60 * 1000
 
 class Game:
     def __init__(self, root):
@@ -32,6 +33,7 @@ class Game:
 
         self.load_game()
         self.update_loop()
+        self.root.after(AUTOSAVE_INTERVAL_MS, self._autosave)
 
     def create_widgets(self):
         self.cookie_label = tk.Label(
@@ -106,6 +108,15 @@ class Game:
         self.root.after(100, self.update_loop)
 
     def save_game(self):
+        try:
+            self._write_save()
+        except OSError as e:
+            messagebox.showerror("Save failed", str(e))
+            return
+        messagebox.showinfo("Saved", "Game saved!")
+
+    def _write_save(self):
+        """Write the current state to disk, replacing the old save atomically."""
         data = serialize_state(
             cookies=self.cookies,
             click_power=self.click_power,
@@ -115,9 +126,17 @@ class Game:
             upgrades=self.upgrades.get_bought(),
             timestamp=time.time(),
         )
-        with open(SAVE_FILE, "w", encoding="utf-8") as f:
+        temp_file = SAVE_FILE + ".tmp"
+        with open(temp_file, "w", encoding="utf-8") as f:
             json.dump(data, f)
-        messagebox.showinfo("Saved", "Game saved!")
+        os.replace(temp_file, SAVE_FILE)
+
+    def _autosave(self):
+        try:
+            self._write_save()
+        except OSError as e:
+            print("Autosave failed:", e)
+        self.root.after(AUTOSAVE_INTERVAL_MS, self._autosave)
 
     def load_game(self):
         if not os.path.exists(SAVE_FILE):
