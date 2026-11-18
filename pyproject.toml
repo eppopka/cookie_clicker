@@ -9,6 +9,21 @@ description = "A small desktop cookie clicker built with Python and tkinter"
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = []
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: End Users/Desktop",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Games/Entertainment :: Simulation",
+]
+
+[project.urls]
+Homepage = "https://github.com/eppopka/cookie_clicker"
+Changelog = "https://github.com/eppopka/cookie_clicker/blob/main/CHANGELOG.md"
 
 [tool.setuptools]
 py-modules = ["economy", "game", "main", "save", "shop", "upgrades"]
