@@ -94,3 +94,16 @@ class TestFormatNumber:
     )
     def test_compact_rendering(self, value, expected):
         assert format_number(value) == expected
+
+    @pytest.mark.parametrize(
+        "value, expected",
+        [
+            # Rounding must not produce "1000K" or "1000M" at the boundary.
+            (999_994, "999.99K"),
+            (999_995, "1M"),
+            (999_994_999, "999.99M"),
+            (999_995_000, "1B"),
+        ],
+    )
+    def test_values_near_a_suffix_boundary_round_up(self, value, expected):
+        assert format_number(value) == expected
