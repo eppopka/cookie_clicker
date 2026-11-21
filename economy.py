@@ -37,6 +37,23 @@ def click_upgrade_cost(level: int) -> int:
     return int(round(CLICK_UPGRADE_BASE_COST * (CLICK_UPGRADE_GROWTH ** (level - 1))))
 
 
+def bulk_cost(base_cost: float, owned: int, count: int,
+              growth: float = BUILDING_COST_GROWTH) -> int:
+    """Return the total price of the next ``count`` copies of a building.
+
+    Buying in bulk is priced exactly like buying one copy at a time, so
+    the player never pays extra for the convenience.
+    """
+    if owned < 0:
+        raise ValueError("owned buildings cannot be negative")
+    if count < 0:
+        raise ValueError("cannot buy a negative number of buildings")
+    return sum(
+        building_cost(base_cost, owned + offset, growth)
+        for offset in range(count)
+    )
+
+
 def total_cps(buildings: Mapping[str, Mapping[str, float]],
               multiplier: float = 1.0) -> float:
     """Sum the output of every owned building, then apply a multiplier."""

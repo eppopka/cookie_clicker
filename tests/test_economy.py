@@ -7,6 +7,7 @@ from economy import (
     CLICK_UPGRADE_BASE_COST,
     OFFLINE_EARNINGS_CAP_SECONDS,
     building_cost,
+    bulk_cost,
     click_upgrade_cost,
     format_number,
     offline_earnings,
@@ -28,6 +29,27 @@ class TestBuildingCost:
     def test_negative_owned_count_is_rejected(self):
         with pytest.raises(ValueError):
             building_cost(15, -1)
+
+
+class TestBulkCost:
+    def test_buying_nothing_costs_nothing(self):
+        assert bulk_cost(15, 0, 0) == 0
+
+    def test_batch_price_is_the_sum_of_single_prices(self):
+        expected = sum(building_cost(100, owned) for owned in range(3))
+        assert bulk_cost(100, 0, 3) == expected
+
+    def test_price_accounts_for_copies_already_owned(self):
+        expected = sum(building_cost(15, owned) for owned in range(5, 15))
+        assert bulk_cost(15, 5, 10) == expected
+
+    def test_negative_owned_count_is_rejected(self):
+        with pytest.raises(ValueError):
+            bulk_cost(15, -1, 1)
+
+    def test_negative_batch_size_is_rejected(self):
+        with pytest.raises(ValueError):
+            bulk_cost(15, 0, -5)
 
 
 class TestClickUpgradeCost:
