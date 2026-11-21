@@ -52,6 +52,7 @@ class Shop:
         }
 
         self.buttons = {}
+        self._button_text = {}
         for name in self.buildings:
             btn = tk.Button(
                 self.frame,
@@ -107,7 +108,9 @@ class Shop:
             text = (f"{name}  |  Owned: {b['owned']}  |  "
                     f"+{format_number(b['cps'])} cps each  |  "
                     f"x{self.buy_amount}: {format_number(cost)}")
-            self.buttons[name].config(text=text)
+            if self._button_text.get(name) != text:
+                self._button_text[name] = text
+                self.buttons[name].config(text=text)
 
     def get_owned(self):
         return {name: b["owned"] for name, b in self.buildings.items()}

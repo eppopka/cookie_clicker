@@ -105,13 +105,19 @@ class Game:
         self.cps = base_cps * self.cps_multiplier
 
     def update_display(self):
-        self.cookie_label.config(text=f"{format_number(self.cookies)} cookies")
-        self.cps_label.config(text=f"per second: {format_number(self.cps)}")
+        cookie_text = f"{format_number(self.cookies)} cookies"
+        if self.cookie_label.cget("text") != cookie_text:
+            self.cookie_label.config(text=cookie_text)
+
+        cps_text = f"per second: {format_number(self.cps)}"
+        if self.cps_label.cget("text") != cps_text:
+            self.cps_label.config(text=cps_text)
 
         upgrade_cost = click_upgrade_cost(self.click_level)
-        self.upgrade_btn.config(
-            text=f"Upgrade Click Power (x{self.click_power:g}) - Cost: {format_number(upgrade_cost)}"
-        )
+        upgrade_text = (f"Upgrade Click Power (x{self.click_power:g}) - "
+                        f"Cost: {format_number(upgrade_cost)}")
+        if self.upgrade_btn.cget("text") != upgrade_text:
+            self.upgrade_btn.config(text=upgrade_text)
 
         self.shop.update_buttons()
         self.upgrades.update_buttons()

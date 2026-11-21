@@ -57,6 +57,7 @@ class Upgrades:
         ]
 
         self.buttons = {}
+        self._button_style = {}
         self.create_buttons()
 
     def create_buttons(self):
@@ -107,21 +108,26 @@ class Upgrades:
 
             # Show the upgrade only when the player has reached the unlock amount
             if self.game.cookies < upgrade["unlock_at"] and not upgrade["bought"]:
-                btn.config(text="???", state="disabled")
-                continue
-
-            if upgrade["bought"]:
-                btn.config(
-                    text=f"✓ {upgrade['name']}  (owned)",
-                    state="disabled",
-                    bg="#d4edda"
+                style = ("???", "disabled", "SystemButtonFace")
+            elif upgrade["bought"]:
+                style = (
+                    f"✓ {upgrade['name']}  (owned)",
+                    "disabled",
+                    "#d4edda",
                 )
             else:
-                btn.config(
-                    text=f"{upgrade['name']}  |  {upgrade['description']}  |  Cost: {format_number(upgrade['cost'])}",
-                    state="normal",
-                    bg="SystemButtonFace"
+                style = (
+                    f"{upgrade['name']}  |  {upgrade['description']}  |  "
+                    f"Cost: {format_number(upgrade['cost'])}",
+                    "normal",
+                    "SystemButtonFace",
                 )
+
+            if self._button_style.get(upgrade["id"]) == style:
+                continue
+            self._button_style[upgrade["id"]] = style
+            text, state, bg = style
+            btn.config(text=text, state=state, bg=bg)
 
     def get_bought(self):
         return {u["id"]: u["bought"] for u in self.upgrades}
