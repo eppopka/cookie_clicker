@@ -33,7 +33,8 @@ class Game:
 
         self.load_game()
         self.update_loop()
-        self.root.after(AUTOSAVE_INTERVAL_MS, self._autosave)
+        self._autosave_job = self.root.after(AUTOSAVE_INTERVAL_MS, self._autosave)
+        self.root.protocol("WM_DELETE_WINDOW", self.close)
 
     def create_widgets(self):
         self.cookie_label = tk.Label(
@@ -149,7 +150,18 @@ class Game:
             self._write_save()
         except OSError as e:
             print("Autosave failed:", e)
-        self.root.after(AUTOSAVE_INTERVAL_MS, self._autosave)
+        self._autosave_job = self.root.after(AUTOSAVE_INTERVAL_MS, self._autosave)
+
+    def close(self):
+        """Flush the save and stop the background jobs before closing."""
+        if self._autosave_job is not None:
+            self.root.after_cancel(self._autosave_job)
+            self._autosave_job = None
+        try:
+            self._write_save()
+        except OSError as e:
+            print("Save on exit failed:", e)
+        self.root.destroy()
 
     def load_game(self):
         if not os.path.exists(SAVE_FILE):
