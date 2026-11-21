@@ -16,8 +16,8 @@ class Game:
     def __init__(self, root):
         self.root = root
         self.root.title("Cookie Clicker")
-        self.root.geometry("500x750")
-        self.root.resizable(False, False)
+        self.root.geometry("540x840")
+        self.root.minsize(540, 840)
         self.root.configure(bg="#f5e6c8")
 
         # Game state
@@ -50,7 +50,7 @@ class Game:
         self.cps_label.pack()
 
         self.cookie_btn = tk.Button(
-            self.root, text="🍪", font=("Arial", 80),
+            self.root, text="🍪", font=("Arial", 64),
             bg="#d2691e", activebackground="#b85c1a",
             command=self.click_cookie, relief="raised", bd=8
         )
@@ -60,7 +60,7 @@ class Game:
         self.upgrade_btn = tk.Button(
             self.root,
             text="",
-            font=("Arial", 11),
+            font=("Arial", 10),
             command=self.upgrade_click,
             bg="#ffe4b5"
         )

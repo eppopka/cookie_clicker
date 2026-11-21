@@ -41,11 +41,14 @@ class Shop:
         self._highlight_amount()
 
         self.buildings = {
-            "Cursor":  {"base_cost": 15,     "cps": 0.1,   "owned": 0},
-            "Grandma": {"base_cost": 100,    "cps": 1.0,   "owned": 0},
-            "Farm":    {"base_cost": 1100,   "cps": 8.0,   "owned": 0},
-            "Mine":    {"base_cost": 12000,  "cps": 47.0,  "owned": 0},
-            "Factory": {"base_cost": 130000, "cps": 260.0, "owned": 0},
+            "Cursor":      {"base_cost": 15,        "cps": 0.1,     "owned": 0},
+            "Grandma":     {"base_cost": 100,       "cps": 1.0,     "owned": 0},
+            "Farm":        {"base_cost": 1_100,     "cps": 8.0,     "owned": 0},
+            "Mine":        {"base_cost": 12_000,    "cps": 47.0,    "owned": 0},
+            "Factory":     {"base_cost": 130_000,   "cps": 260.0,   "owned": 0},
+            "Shipment":    {"base_cost": 1_400_000, "cps": 2_600.0, "owned": 0},
+            "Alchemy Lab": {"base_cost": 20_000_000, "cps": 16_000.0, "owned": 0},
+            "Portal":      {"base_cost": 330_000_000, "cps": 100_000.0, "owned": 0},
         }
 
         self.buttons = {}
@@ -53,12 +56,12 @@ class Shop:
             btn = tk.Button(
                 self.frame,
                 text="",
-                font=("Arial", 10),
+                font=("Arial", 9),
                 command=lambda n=name: self.buy(n),
-                width=42,
+                width=46,
                 anchor="w"
             )
-            btn.pack(pady=3)
+            btn.pack(pady=2)
             self.buttons[name] = btn
 
         self.update_buttons()

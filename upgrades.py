@@ -64,9 +64,9 @@ class Upgrades:
             btn = tk.Button(
                 self.frame,
                 text="",
-                font=("Arial", 10),
+                font=("Arial", 9),
                 command=lambda u=upgrade: self.buy(u),
-                width=42,
+                width=46,
                 anchor="w",
                 state="disabled"
             )
