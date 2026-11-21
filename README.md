@@ -9,11 +9,13 @@ while the game is closed.
 ## Features
 
 - Click the big cookie (or press <kbd>Space</kbd>) to bake.
-- Five buildings — Cursor, Grandma, Farm, Mine and Factory — each 15% more
-  expensive per copy owned.
+- Eight buildings — from Cursor to Portal — each 15% more expensive per
+  copy owned.
+- Buy buildings one at a time or in batches of 10 and 100.
 - Four upgrades, from Reinforced Index Finger to Forwards from Grandma.
 - Offline earnings while the game is closed, capped at 8 hours.
-- Autosave every minute plus a manual **Save** button.
+- Autosave every minute, a manual **Save** button, and a final save when
+  the window is closed.
 - Compact counters (`1.5K`, `2.3M`) so the UI never overflows.
 - Versioned, defensive save format: a corrupted file is reported instead of
   crashing the game.
@@ -38,8 +40,9 @@ python3 main.py
 | ------------- | ---------------------------- |
 | Bake a cookie | Click the cookie or press Space |
 | Buy a building| Click it in the **Buildings** list |
+| Choose a batch| Click **x1**, **x10** or **x100** above the building list |
 | Buy an upgrade| Click it in the **Upgrades** list (appears once unlocked) |
-| Save          | **Save** button, or wait for the autosave |
+| Save          | **Save** button, the autosave, or closing the window |
 | Reset         | **Reset Game** button        |
 
 ## Project layout
@@ -53,6 +56,7 @@ python3 main.py
 | `economy.py`  | Pure cost/cps/offline math (no tkinter)         |
 | `save.py`     | Save-file schema and legacy-save handling       |
 | `tests/`      | Pytest suite for `economy.py` and `save.py`     |
+| `CHANGELOG.md`| Release notes for each version                  |
 
 ## Running the tests
 
@@ -70,5 +74,6 @@ request.
 
 Progress is stored in `cookie_clicker_save.json` next to `main.py`. The file
 is versioned (`SAVE_VERSION` in `save.py`), ignored by git, and written
-atomically, so an interrupted save cannot corrupt it. Deleting the file is
-the same as starting over.
+atomically, so an interrupted save cannot corrupt it. The game also saves
+when you close the window, so quitting never loses a purchase. Deleting the
+file is the same as starting over.

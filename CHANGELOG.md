@@ -6,6 +6,30 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.3.0]
+
+### Added
+
+- Shipment, Alchemy Lab and Portal buildings, extending the price curve
+  into the late game.
+- Batch buying: pick **x1**, **x10** or **x100** in the shop. A batch costs
+  exactly the same as buying the copies one by one.
+
+### Changed
+
+- The window is larger and resizable so all eight buildings fit.
+
+### Fixed
+
+- Closing the window writes the save immediately instead of losing up to a
+  minute of progress.
+- Upgrades hidden again by a reset no longer keep the "owned" colour.
+
+### Performance
+
+- The shop and upgrade lists only redraw widgets whose text actually
+  changed, instead of refreshing every button ten times per second.
+
 ## [0.2.0]
 
 ### Added

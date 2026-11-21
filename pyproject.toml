@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cookie-clicker"
-version = "0.2.0"
+version = "0.3.0"
 description = "A small desktop cookie clicker built with Python and tkinter"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -23,6 +23,8 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://github.com/eppopka/cookie_clicker"
+Repository = "https://github.com/eppopka/cookie_clicker"
+Issues = "https://github.com/eppopka/cookie_clicker/issues"
 Changelog = "https://github.com/eppopka/cookie_clicker/blob/main/CHANGELOG.md"
 
 [tool.setuptools]
