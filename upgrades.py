@@ -106,8 +106,9 @@ class Upgrades:
         for upgrade in self.upgrades:
             btn = self.buttons[upgrade["id"]]
 
-            # Show the upgrade only when the player has reached the unlock amount
-            if self.game.cookies < upgrade["unlock_at"] and not upgrade["bought"]:
+            # Unlock from lifetime output, not the current balance: buying
+            # something must never hide an upgrade the player has reached.
+            if self.game.total_baked < upgrade["unlock_at"] and not upgrade["bought"]:
                 style = ("???", "disabled", "SystemButtonFace")
             elif upgrade["bought"]:
                 style = (

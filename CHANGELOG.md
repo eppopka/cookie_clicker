@@ -6,6 +6,17 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- The save file records the lifetime total of baked cookies (save version 2).
+
+### Fixed
+
+- Upgrades stay unlocked after spending: unlocking now looks at the lifetime
+  total instead of the current balance, so buying buildings no longer turns
+  an available upgrade back into `???`. Saves from version 1 fall back to the
+  current balance, keeping the unlocks the player can already see.
+
 ## [0.3.0]
 
 ### Added

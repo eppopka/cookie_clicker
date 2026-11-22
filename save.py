@@ -10,7 +10,8 @@ from typing import Any, Dict, Mapping, Optional
 # Bump when the shape of the save file changes.
 #   0 - legacy saves without version/click_level
 #   1 - versioned saves with a separate click_level counter
-SAVE_VERSION = 1
+#   2 - saves the lifetime total of baked cookies
+SAVE_VERSION = 2
 
 
 def _as_float(value: Any, default: float) -> float:
@@ -38,7 +39,8 @@ def _as_mapping(value: Any) -> Mapping[str, Any]:
 
 
 def serialize_state(*, cookies: float, click_power: float, click_level: int,
-                    cps_multiplier: float, buildings: Mapping[str, int],
+                    cps_multiplier: float, total_baked: float,
+                    buildings: Mapping[str, int],
                     upgrades: Mapping[str, bool], timestamp: float) -> Dict[str, Any]:
     """Build the dict that is written to disk."""
     return {
@@ -47,6 +49,7 @@ def serialize_state(*, cookies: float, click_power: float, click_level: int,
         "click_power": float(click_power),
         "click_level": int(click_level),
         "cps_multiplier": float(cps_multiplier),
+        "total_baked": float(total_baked),
         "buildings": dict(buildings),
         "upgrades": dict(upgrades),
         "timestamp": float(timestamp),
@@ -77,12 +80,19 @@ def deserialize_state(raw: Any) -> Dict[str, Any]:
         for upgrade_id, owned in _as_mapping(raw.get("upgrades")).items()
     }
 
+    cookies = max(0.0, _as_float(raw.get("cookies"), 0.0))
+    # Saves from before version 2 have no lifetime counter. The current
+    # balance is the best lower bound we have, so keep every unlock the
+    # player can already see instead of hiding it again.
+    total_baked = max(cookies, _as_float(raw.get("total_baked"), cookies))
+
     return {
         "version": SAVE_VERSION,
-        "cookies": max(0.0, _as_float(raw.get("cookies"), 0.0)),
+        "cookies": cookies,
         "click_power": max(1.0, _as_float(raw.get("click_power"), 1.0)),
         "click_level": max(1, _as_int(raw.get("click_level"), 1)),
         "cps_multiplier": max(1.0, _as_float(raw.get("cps_multiplier"), 1.0)),
+        "total_baked": total_baked,
         "buildings": buildings,
         "upgrades": upgrades,
         "timestamp": timestamp,

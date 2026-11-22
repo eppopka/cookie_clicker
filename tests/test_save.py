@@ -11,6 +11,7 @@ def make_state(**overrides):
         "click_power": 12.0,
         "click_level": 4,
         "cps_multiplier": 1.1,
+        "total_baked": 500.0,
         "buildings": {"Cursor": 10, "Grandma": 2},
         "upgrades": {"double_click": True, "click_x5": False},
         "timestamp": 1_700_000_000.0,
@@ -30,6 +31,7 @@ class TestSerializeState:
         assert data["click_power"] == 12.0
         assert data["click_level"] == 4
         assert data["cps_multiplier"] == 1.1
+        assert data["total_baked"] == 500.0
         assert data["buildings"] == {"Cursor": 10, "Grandma": 2}
         assert data["upgrades"] == {"double_click": True, "click_x5": False}
         assert data["timestamp"] == 1_700_000_000.0
@@ -52,6 +54,7 @@ class TestDeserializeState:
         assert state["click_power"] == 1.0
         assert state["click_level"] == 1
         assert state["cps_multiplier"] == 1.0
+        assert state["total_baked"] == 0.0
         assert state["buildings"] == {}
         assert state["upgrades"] == {}
         assert state["timestamp"] is None
@@ -75,6 +78,23 @@ class TestDeserializeState:
 
     def test_negative_cookies_are_clamped(self):
         assert deserialize_state({"cookies": -500})["cookies"] == 0
+
+    def test_legacy_save_without_lifetime_total_falls_back_to_balance(self):
+        legacy = {"cookies": 900, "buildings": {"Cursor": 5}}
+
+        state = deserialize_state(legacy)
+
+        assert state["total_baked"] == 900
+
+    def test_lifetime_total_is_never_below_the_balance(self):
+        state = deserialize_state({"cookies": 900, "total_baked": 100})
+
+        assert state["total_baked"] == 900
+
+    def test_malformed_lifetime_total_falls_back_to_balance(self):
+        state = deserialize_state({"cookies": 40, "total_baked": "lots"})
+
+        assert state["total_baked"] == 40
 
     def test_invalid_numbers_use_defaults(self):
         state = deserialize_state(

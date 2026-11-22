@@ -26,6 +26,9 @@ class Game:
         self.click_power = 1.0
         self.click_level = 1
         self.cps_multiplier = 1.0
+        # Lifetime cookies, never reduced by purchases. Upgrades unlock
+        # from this counter so spending never hides them again.
+        self.total_baked = 0.0
 
         self.create_widgets()
         self.shop = Shop(self.root, self)
@@ -88,6 +91,7 @@ class Game:
 
     def click_cookie(self):
         self.cookies += self.click_power
+        self.total_baked += self.click_power
         self.update_display()
 
     def upgrade_click(self):
@@ -123,7 +127,9 @@ class Game:
         self.upgrades.update_buttons()
 
     def update_loop(self):
-        self.cookies += self.cps * 0.1
+        baked = self.cps * 0.1
+        self.cookies += baked
+        self.total_baked += baked
         self.update_display()
         self.root.after(100, self.update_loop)
 
@@ -142,6 +148,7 @@ class Game:
             click_power=self.click_power,
             click_level=self.click_level,
             cps_multiplier=self.cps_multiplier,
+            total_baked=self.total_baked,
             buildings=self.shop.get_owned(),
             upgrades=self.upgrades.get_bought(),
             timestamp=time.time(),
@@ -186,6 +193,7 @@ class Game:
         self.click_power = state["click_power"]
         self.click_level = state["click_level"]
         self.cps_multiplier = state["cps_multiplier"]
+        self.total_baked = state["total_baked"]
 
         self.shop.load_owned(state["buildings"])
         self.upgrades.load_bought(state["upgrades"])
@@ -194,7 +202,9 @@ class Game:
 
         # Offline progress (capped inside the helper)
         if state["timestamp"] is not None:
-            self.cookies += offline_earnings(self.cps, time.time() - state["timestamp"])
+            earned = offline_earnings(self.cps, time.time() - state["timestamp"])
+            self.cookies += earned
+            self.total_baked += earned
 
         self.update_display()
 
@@ -204,6 +214,7 @@ class Game:
             self.click_power = 1
             self.click_level = 1
             self.cps_multiplier = 1.0
+            self.total_baked = 0.0
 
             # Reset buildings
             self.shop.load_owned({name: 0 for name in self.shop.buildings})
