@@ -17,7 +17,7 @@ while the game is closed.
 - Offline earnings while the game is closed, capped at 8 hours.
 - Autosave every minute, a manual **Save** button, and a final save when
   the window is closed.
-- Compact counters (`1.5K`, `2.3M`) so the UI never overflows.
+- Compact counters (`1.5K`, `2.3M`, `1.5Qa`) so the UI never overflows.
 - Versioned, defensive save format: a corrupted file is reported instead of
   crashing the game.
 
