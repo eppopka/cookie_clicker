@@ -19,6 +19,9 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- The game always reads and writes its save next to `game.py`. Starting it
+  from another directory no longer begins a fresh game and then leaves the
+  real save behind.
 - Upgrades stay unlocked after spending: unlocking now looks at the lifetime
   total instead of the current balance, so buying buildings no longer turns
   an available upgrade back into `???`. Saves from version 1 fall back to the

@@ -35,6 +35,9 @@ cd cookie_clicker
 python3 main.py
 ```
 
+Progress is stored in `cookie_clicker_save.json` next to `game.py`, so the
+game finds the same save no matter which directory it was started from.
+
 ## Controls
 
 | Action        | How                          |

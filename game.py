@@ -9,7 +9,11 @@ from economy import click_upgrade_cost, format_number, offline_earnings
 from save import deserialize_state, serialize_state
 from shop import Shop
 
-SAVE_FILE = "cookie_clicker_save.json"
+# Keep the save next to the game, not next to the shell that started it:
+# launching from another directory used to start a brand-new game.
+SAVE_FILE = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "cookie_clicker_save.json"
+)
 AUTOSAVE_INTERVAL_MS = 60 * 1000
 
 class Game:
