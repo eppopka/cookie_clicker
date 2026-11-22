@@ -11,7 +11,8 @@ while the game is closed.
 - Click the big cookie (or press <kbd>Space</kbd>) to bake.
 - Eight buildings — from Cursor to Portal — each 15% more expensive per
   copy owned.
-- Buy buildings one at a time or in batches of 10 and 100.
+- Buy buildings one at a time or in batches of 10 and 100. A batch you
+  cannot fully afford still buys as many copies as your balance covers.
 - Four upgrades, from Reinforced Index Finger to Forwards from Grandma.
 - Offline earnings while the game is closed, capped at 8 hours.
 - Autosave every minute, a manual **Save** button, and a final save when

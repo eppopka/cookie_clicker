@@ -54,6 +54,32 @@ def bulk_cost(base_cost: float, owned: int, count: int,
     )
 
 
+def max_affordable(base_cost: float, owned: int, budget: float, limit: int,
+                   growth: float = BUILDING_COST_GROWTH) -> int:
+    """Return how many copies of a building ``budget`` can pay for.
+
+    The answer is capped at ``limit``, the batch size the player picked,
+    and priced exactly like :func:`bulk_cost`, so a player who cannot
+    afford the whole batch still gets the copies they *can* afford.
+    """
+    if owned < 0:
+        raise ValueError("owned buildings cannot be negative")
+    if budget < 0:
+        raise ValueError("cannot spend a negative budget")
+    if limit < 0:
+        raise ValueError("cannot buy a negative number of buildings")
+
+    count = 0
+    total = 0
+    while count < limit:
+        price = building_cost(base_cost, owned + count, growth)
+        if total + price > budget:
+            break
+        total += price
+        count += 1
+    return count
+
+
 def total_cps(buildings: Mapping[str, Mapping[str, float]],
               multiplier: float = 1.0) -> float:
     """Sum the output of every owned building, then apply a multiplier."""

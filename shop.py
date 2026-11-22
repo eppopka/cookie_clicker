@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 
-from economy import bulk_cost, format_number, total_cps
+from economy import bulk_cost, format_number, max_affordable, total_cps
 
 # Batch sizes offered in the shop.
 BUY_AMOUNTS = (1, 10, 100)
@@ -74,17 +74,27 @@ class Shop:
         b = self.buildings[name]
         return bulk_cost(b["base_cost"], b["owned"], amount)
 
+    def affordable_count(self, name):
+        """How many copies of the selected batch the player can pay for."""
+        b = self.buildings[name]
+        return max_affordable(
+            b["base_cost"], b["owned"], self.game.cookies, limit=self.buy_amount
+        )
+
     def buy(self, name):
-        amount = self.buy_amount
-        cost = self.get_cost(name, amount)
-        if self.game.cookies >= cost:
-            self.game.cookies -= cost
-            self.buildings[name]["owned"] += amount
-            self.game.recalculate_cps()
-            self.update_buttons()
-            self.game.update_display()
-        else:
+        # Buy as many as the batch allows and the balance covers, so an
+        # unaffordable x100 no longer wastes the player's click.
+        amount = self.affordable_count(name)
+        if amount == 0:
+            cost = self.get_cost(name, 1)
             messagebox.showinfo("Not enough cookies", f"You need {format_number(cost)} cookies!")
+            return
+
+        self.game.cookies -= self.get_cost(name, amount)
+        self.buildings[name]["owned"] += amount
+        self.game.recalculate_cps()
+        self.update_buttons()
+        self.game.update_display()
 
     def set_buy_amount(self, amount):
         self.buy_amount = amount

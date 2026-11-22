@@ -10,6 +10,7 @@ from economy import (
     bulk_cost,
     click_upgrade_cost,
     format_number,
+    max_affordable,
     offline_earnings,
     total_cps,
 )
@@ -50,6 +51,39 @@ class TestBulkCost:
     def test_negative_batch_size_is_rejected(self):
         with pytest.raises(ValueError):
             bulk_cost(15, 0, -5)
+
+
+class TestMaxAffordable:
+    def test_an_empty_purse_buys_nothing(self):
+        assert max_affordable(15, 0, 0, limit=10) == 0
+
+    def test_a_purse_below_the_first_price_buys_nothing(self):
+        assert max_affordable(15, 0, 14, limit=10) == 0
+
+    def test_an_exact_budget_buys_the_whole_batch(self):
+        budget = bulk_cost(15, 0, 3)
+
+        assert max_affordable(15, 0, budget, limit=10) == 3
+
+    def test_a_short_budget_buys_the_affordable_part(self):
+        # 15 + 17 = 32, the third copy costs 20 on top.
+        assert max_affordable(15, 0, 51, limit=10) == 2
+
+    def test_the_selected_batch_size_is_never_exceeded(self):
+        assert max_affordable(15, 0, 10 ** 9, limit=100) == 100
+
+    def test_copies_already_owned_are_priced_in(self):
+        budget = bulk_cost(15, 5, 2)
+
+        assert max_affordable(15, 5, budget, limit=10) == 2
+
+    def test_negative_arguments_are_rejected(self):
+        with pytest.raises(ValueError):
+            max_affordable(15, -1, 100, limit=10)
+        with pytest.raises(ValueError):
+            max_affordable(15, 0, -1, limit=10)
+        with pytest.raises(ValueError):
+            max_affordable(15, 0, 100, limit=-1)
 
 
 class TestClickUpgradeCost:

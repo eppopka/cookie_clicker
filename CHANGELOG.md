@@ -10,6 +10,11 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 - The save file records the lifetime total of baked cookies (save version 2).
 
+### Changed
+
+- Buying a batch you cannot fully afford now buys as many copies as your
+  balance covers, instead of refusing the purchase.
+
 ### Fixed
 
 - Upgrades stay unlocked after spending: unlocking now looks at the lifetime
