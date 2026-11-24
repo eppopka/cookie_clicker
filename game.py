@@ -1,10 +1,8 @@
 from __future__ import annotations
 
 import json
-import os
 import time
 from pathlib import Path
-from typing import Any
 
 import tkinter as tk
 from tkinter import messagebox
@@ -37,7 +35,7 @@ class Game:
         self.cps_multiplier: float = 1.0
         self.total_baked: float = 0.0   # lifetime cookies (never decreases)
 
-        self._autosave_job: str | None = None
+        self._autosave_job: object | None = None
 
         self.create_widgets()
         self.shop = Shop(self.root, self)
@@ -116,7 +114,7 @@ class Game:
     def click_cookie(self) -> None:
         self.cookies += self.click_power
         self.total_baked += self.click_power
-        self.update_display()
+        self._update_labels()          # fast path – only labels
 
     def upgrade_click(self) -> None:
         cost = click_upgrade_cost(self.click_level)
@@ -129,13 +127,14 @@ class Game:
         self.cookies -= cost
         self.click_level += 1
         self.click_power += 1
-        self.update_display()
+        self.update_display()          # full refresh after purchase
 
     def recalculate_cps(self) -> None:
         base_cps = self.shop.recalculate_cps()
         self.cps = base_cps * self.cps_multiplier
 
-    def update_display(self) -> None:
+    def _update_labels(self) -> None:
+        """Cheap update used on every click / tick."""
         self.cookie_label.config(text=f"{format_number(self.cookies)} cookies")
         self.cps_label.config(text=f"per second: {format_number(self.cps)}")
 
@@ -144,6 +143,9 @@ class Game:
             text=f"Upgrade Click Power (x{self.click_power:g}) – Cost: {format_number(cost)}"
         )
 
+    def update_display(self) -> None:
+        """Full UI refresh (labels + shop + upgrades)."""
+        self._update_labels()
         self.shop.update_buttons()
         self.upgrades.update_buttons()
 
@@ -223,12 +225,19 @@ class Game:
         self.recalculate_cps()
 
         # Offline progress
+        earned = 0.0
         if state.get("timestamp") is not None:
             earned = offline_earnings(self.cps, time.time() - state["timestamp"])
             self.cookies += earned
             self.total_baked += earned
 
         self.update_display()
+
+        if earned > 0:
+            messagebox.showinfo(
+                "Welcome back!",
+                f"While you were away you baked {format_number(earned)} cookies.",
+            )
 
     def reset_game(self) -> None:
         if not messagebox.askyesno("Reset", "Are you sure you want to reset all progress?"):
@@ -253,7 +262,6 @@ class Game:
         self.update_display()
 
 
-# Example entry point (keep your existing one if you already have it)
 if __name__ == "__main__":
     root = tk.Tk()
     game = Game(root)
