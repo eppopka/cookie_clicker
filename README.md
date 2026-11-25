@@ -48,7 +48,7 @@ game finds the same save no matter which directory it was started from.
 | Buy a building| Click it in the **Buildings** list |
 | Choose a batch| Click **x1**, **x10** or **x100** above the building list |
 | Buy an upgrade| Click it in the **Upgrades** list (appears once unlocked) |
-| Save          | **Save** button, the autosave, or closing the window |
+| Save          | **Save** button, <kbd>Ctrl</kbd>+<kbd>S</kbd>, the autosave, or closing the window |
 | Reset         | **Reset Game** button        |
 
 ## Project layout

@@ -8,6 +8,8 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Save with <kbd>Ctrl</kbd>+<kbd>S</kbd> (<kbd>Cmd</kbd>+<kbd>S</kbd> on
+  macOS) instead of reaching for the **Save** button.
 - A stats line under the controls shows the lifetime total, cookies per
   click and the current cps multiplier, so the lifetime counter is visible.
 - Counters keep their short suffixes past a trillion: `1Qa`, `1Qi`, `1Sx`

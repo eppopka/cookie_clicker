@@ -113,12 +113,19 @@ class Game:
         ).pack(pady=(4, 0))
 
         self.root.bind("<space>", self._on_space_key)
+        self.root.bind("<Control-s>", self._on_save_key)
+        self.root.bind("<Command-s>", self._on_save_key)
 
     def _on_space_key(self, event: tk.Event | None = None) -> None:
         """Bake with Space unless a button currently has focus."""
         if isinstance(self.root.focus_get(), tk.Button):
             return
         self.click_cookie()
+
+    def _on_save_key(self, event: tk.Event | None = None) -> str:
+        """Save with Ctrl+S (Cmd+S on macOS)."""
+        self.save_game()
+        return "break"
 
     # ------------------------------------------------------------- Game logic
     def click_cookie(self) -> None:
