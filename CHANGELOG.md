@@ -19,6 +19,8 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- The shop shows what a building really produces: the cps of each copy now
+  includes the `Forwards from Grandma` multiplier instead of the base value.
 - The game always reads and writes its save next to `game.py`. Starting it
   from another directory no longer begins a fresh game and then leaves the
   real save behind.

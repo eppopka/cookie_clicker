@@ -115,8 +115,11 @@ class Shop:
     def update_buttons(self):
         for name, b in self.buildings.items():
             cost = self.get_cost(name)
+            # Show what a copy actually produces, multiplier included, so
+            # cps upgrades are visible in the shop as well.
+            output = b["cps"] * self.game.cps_multiplier
             text = (f"{name}  |  Owned: {b['owned']}  |  "
-                    f"+{format_number(b['cps'])} cps each  |  "
+                    f"+{format_number(output)} cps each  |  "
                     f"x{self.buy_amount}: {format_number(cost)}")
             if self._button_text.get(name) != text:
                 self._button_text[name] = text
