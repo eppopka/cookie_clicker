@@ -36,6 +36,7 @@ class Game:
         self.total_baked: float = 0.0   # lifetime cookies (never decreases)
 
         self._autosave_job: object | None = None
+        self._stats_text = ""
 
         self.create_widgets()
         self.shop = Shop(self.root, self)
@@ -94,6 +95,15 @@ class Game:
         tk.Button(control_frame, text="Save", command=self.save_game).pack(side="left", padx=5)
         tk.Button(control_frame, text="Reset Game", command=self.reset_game).pack(side="left", padx=5)
 
+        self.stats_label = tk.Label(
+            self.root,
+            text="",
+            font=("Arial", 9),
+            bg="#f5e6c8",
+            fg="#a07850",
+        )
+        self.stats_label.pack(pady=(4, 0))
+
         tk.Label(
             self.root,
             text="Tip: press Space to bake",
@@ -142,6 +152,17 @@ class Game:
         self.upgrade_btn.config(
             text=f"Upgrade Click Power (x{self.click_power:g}) – Cost: {format_number(cost)}"
         )
+
+        # The stats line only changes when one of its numbers does, so skip
+        # the widget call when the text is unchanged.
+        stats = (
+            f"baked all time: {format_number(self.total_baked)}  ·  "
+            f"per click: {format_number(self.click_power)}  ·  "
+            f"multiplier: x{self.cps_multiplier:g}"
+        )
+        if stats != self._stats_text:
+            self._stats_text = stats
+            self.stats_label.config(text=stats)
 
     def update_display(self) -> None:
         """Full UI refresh (labels + shop + upgrades)."""

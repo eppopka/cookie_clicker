@@ -18,6 +18,8 @@ while the game is closed.
 - Autosave every minute, a manual **Save** button, and a final save when
   the window is closed.
 - Compact counters (`1.5K`, `2.3M`, `1.5Qa`) so the UI never overflows.
+- A stats line with the lifetime total, cookies per click and the current
+  cps multiplier.
 - Versioned, defensive save format: a corrupted file is reported instead of
   crashing the game.
 
